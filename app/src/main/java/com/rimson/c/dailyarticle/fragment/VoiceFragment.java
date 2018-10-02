@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rimson.c.dailyarticle.R;
-import com.rimson.c.dailyarticle.VoiceActivity;
-import com.rimson.c.dailyarticle.adapter.MyRecyclerViewAdapter;
-import com.rimson.c.dailyarticle.entity.Voice;
+import com.rimson.c.dailyarticle.activity.VoiceActivity;
+import com.rimson.c.dailyarticle.adapter.RecyclerViewAdapter;
+import com.rimson.c.dailyarticle.bean.Voice;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,6 +27,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import android.util.Base64;
 
 public class VoiceFragment extends Fragment {
     private ArrayList<Voice> voiceArrayList;
@@ -49,10 +51,10 @@ public class VoiceFragment extends Fragment {
 
                     LinearLayoutManager layoutManager=new LinearLayoutManager(context);
                     recyclerView.setLayoutManager(layoutManager);
-                    MyRecyclerViewAdapter adapter=new MyRecyclerViewAdapter(context,voiceArrayList);
+                    RecyclerViewAdapter adapter=new RecyclerViewAdapter(context,voiceArrayList);
                     recyclerView.setAdapter(adapter);
 
-                    adapter.setOnMyItemClickListener(new MyRecyclerViewAdapter.OnMyItemClickListener() {
+                    adapter.setOnMyItemClickListener(new RecyclerViewAdapter.OnMyItemClickListener() {
                         @Override
                         public void MyClick(View view, int position) {
                             Voice voice=voiceArrayList.get(position);
@@ -89,10 +91,16 @@ public class VoiceFragment extends Fragment {
                                 .attr("abs:href");
 
                         Document swfDoc=Jsoup.connect(newURL).get();
-                        String swfURL=swfDoc.body().getElementsByClass("p_file").get(0)
-                                .getElementsByTag("embed").attr("abs:src");
+                        String swfURL=swfDoc.body().select(".p_file").select("embed")
+                                .attr("src");
+                        String rex="=(.*?)&";
+                        Pattern pattern = Pattern.compile(rex);// 匹配的模式
+                        Matcher matcher = pattern.matcher(swfURL);
+                        matcher.find();
+                        String uncodedURL=matcher.group(1);
+                        String mp3URL = new String(Base64.decode(uncodedURL,Base64.DEFAULT));
 
-                        Voice voice=new Voice(number,title,author,imgURL,swfURL);
+                        Voice voice=new Voice(number,title,author,imgURL,mp3URL);
                         list.add(voice);
                     }
                     Message message=new Message();

@@ -1,28 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".VoiceActivity">
+    tools:context=".activity.VoiceActivity">
 
     <ImageView
-        android:id="@+id/voiceImg"
+        android:id="@+id/voice_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/voiceTitle"
+        android:id="@+id/voice_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@id/voice_img"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
         android:textStyle="bold"
         android:textSize="25sp"/>
 
     <TextView
-        android:id="@+id/voiceAuthor"
+        android:id="@+id/voice_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-</LinearLayout>
+        android:layout_below="@+id/voice_title"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/voice_author"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:00"/>
+
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/full_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2:30"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

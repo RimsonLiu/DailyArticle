@@ -7,23 +7,17 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-import com.bumptech.glide.Glide;
 import com.rimson.c.dailyarticle.R;
-import com.rimson.c.dailyarticle.entity.Article;
-import com.rimson.c.dailyarticle.entity.Article.*;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -31,7 +25,6 @@ import java.io.IOException;
 public class ArticleFragment extends Fragment {
     private String title;
     private String author;
-    private String article;
 
     private String articleURL="https://meiriyiwen.com/";
 
@@ -107,9 +100,5 @@ public class ArticleFragment extends Fragment {
         return view;
     }
 
-    public Article getArticle(final String url){
-
-        return new Article(title,author,article);
-    }
 
 }

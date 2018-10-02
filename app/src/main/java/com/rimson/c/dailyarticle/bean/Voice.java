@@ -1,21 +1,21 @@
-package com.rimson.c.dailyarticle.entity;
+package com.rimson.c.dailyarticle.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Voice implements Parcelable {
-    private String number;
-    private String title;
-    private String author;
-    private String imgURL;
-    private String swfURL;
+    public String number;
+    public String title;
+    public String author;
+    public String imgURL;
+    public String mp3URL;
 
-    public Voice(String number,String title,String author,String imgURL,String swfURL){
+    public Voice(String number,String title,String author,String imgURL,String mp3URL){
         this.number=number;
         this.title=title;
         this.author=author;
         this.imgURL=imgURL;
-        this.swfURL=swfURL;
+        this.mp3URL=mp3URL;
     }
 
     private Voice(Parcel in) {
@@ -23,7 +23,7 @@ public class Voice implements Parcelable {
         title = in.readString();
         author = in.readString();
         imgURL = in.readString();
-        swfURL = in.readString();
+        mp3URL = in.readString();
     }
 
     public static final Creator<Voice> CREATOR = new Creator<Voice>() {
@@ -38,26 +38,6 @@ public class Voice implements Parcelable {
         }
     };
 
-    public String getNumber() {
-        return number;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getImgURL() {
-        return imgURL;
-    }
-
-    public String getSwfURL() {
-        return swfURL;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -69,6 +49,6 @@ public class Voice implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(author);
         parcel.writeString(imgURL);
-        parcel.writeString(swfURL);
+        parcel.writeString(mp3URL);
     }
 }

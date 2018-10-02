@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.rimson.c.dailyarticle.R;
-import com.rimson.c.dailyarticle.entity.Voice;
+import com.rimson.c.dailyarticle.bean.Voice;
 
 import java.util.ArrayList;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     private ArrayList<Voice> voiceArrayList;
     private Context context;
 
@@ -28,7 +28,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         this.listener=listener;
     }
 
-    public MyRecyclerViewAdapter(Context context,ArrayList voiceArrayList){
+    public RecyclerViewAdapter(Context context, ArrayList voiceArrayList){
         this.context=context;
         this.voiceArrayList=voiceArrayList;
     }
@@ -46,15 +46,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Voice thisVoice=voiceArrayList.get(position);
 
-        holder.getNumber().setText(thisVoice.getNumber());
-        holder.getTitle().setText(thisVoice.getTitle());
-        holder.getAuthor().setText(thisVoice.getAuthor());
+        holder.numberTV.setText(thisVoice.number);
+        holder.titleTV.setText(thisVoice.title);
+        holder.authorTV.setText(thisVoice.author);
 
         Glide.with(context)
-                .load(thisVoice.getImgURL())
+                .load(thisVoice.imgURL)
                 .apply(new RequestOptions()
                         .fitCenter())
-                .into(holder.getImage());
+                .into(holder.imageView);
 
         if (listener!=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
