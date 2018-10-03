@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.widget.Toast;
+
 
 import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.fragment.ArticleFragment;
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private NetworkChangeReceiver networkChangeReceiver;
 
+    private long exitTime=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +42,12 @@ public class MainActivity extends AppCompatActivity {
      * 初始化布局
      */
     private void initViews(){
+        /**
+         * 尝试实现滑动隐藏显示标题栏
+         * Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
         setTitle("每日一文");
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         TabLayout tabLayout=(TabLayout)findViewById(R.id.tab_layout);
@@ -66,6 +76,25 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(networkChangeReceiver, intentFilter);
     }
 
+    //实现再按一次退出应用
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode==KeyEvent.KEYCODE_BACK){
+            exit();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void exit(){
+        if ((System.currentTimeMillis()-exitTime)>2000){
+            Toast.makeText(getApplicationContext(),"再按一次退出应用",Toast.LENGTH_SHORT).show();
+            exitTime=System.currentTimeMillis();
+        }else {
+            finish();
+            System.exit(0);
+        }
+    }
 
     @Override
     protected void onDestroy() {

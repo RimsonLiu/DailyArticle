@@ -35,12 +35,24 @@ public class VoiceFragment extends Fragment {
     private ArrayList<Voice> voiceArrayList;
     private ArrayList<Voice> list=new ArrayList<>();
 
+    private String Url="http://voice.meiriyiwen.com/";
+
+    private RecyclerView recyclerView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_voice,container,false);
 
-        final RecyclerView recyclerView=(RecyclerView)view.findViewById(R.id.recyclerView);
+        recyclerView=(RecyclerView)view.findViewById(R.id.recyclerView);
+
+        getVoice();//获取列表信息
+
+        return view;
+    }
+
+    //获取列表信息
+    private void getVoice(){
         @SuppressLint("HandlerLeak") final Handler handler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -115,7 +127,5 @@ public class VoiceFragment extends Fragment {
             }
         }).start();
 
-
-        return view;
     }
 }

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.ArticleFragment">
+    tools:context=".fragment.ArticleFragment"
+    android:id="@+id/scroll_view">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,14 +32,27 @@
             android:lineSpacingMultiplier="1.2"
             />
 
-        <Button
-            android:id="@+id/roll"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/scrollUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+            <Button
+                android:id="@+id/roll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
-
 
 </ScrollView>

@@ -1,5 +1,7 @@
 package com.rimson.c.dailyarticle.uitl;
 
+import android.util.Log;
+
 import java.io.File;
 
 public class FileIsExists {
@@ -13,7 +15,6 @@ public class FileIsExists {
         }catch (Exception e){
             return false;
         }
-
         return true;
     }
 }

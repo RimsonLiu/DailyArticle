@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.rimson.c.dailyarticle.R;
@@ -28,26 +29,48 @@ public class ArticleFragment extends Fragment {
 
     private String articleURL="https://meiriyiwen.com/";
 
+    private TextView titleTV;
+    private TextView articleTV;
+
     @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         assert inflater != null;
         View view=inflater.inflate(R.layout.fragment_article,container,false);
-        final TextView titleTV=(TextView)view.findViewById(R.id.article_title);
-        final TextView articleTV=(TextView)view.findViewById(R.id.article);
+
+        titleTV=(TextView)view.findViewById(R.id.article_title);
+        articleTV=(TextView)view.findViewById(R.id.article);
+
+        //随机文章
         Button rollBtn=(Button)view.findViewById(R.id.roll);
         rollBtn.setText("随机文章");
         rollBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 articleURL="https://meiriyiwen.com/random";
-                //do something
+                getArticle(articleURL);
             }
         });
 
+        //点击回到顶部
+        final ScrollView scrollView=(ScrollView)view.findViewById(R.id.scroll_view);
+        Button scrollBtn=(Button)view.findViewById(R.id.scrollUp);
+        scrollBtn.setText("回到顶部");
+        scrollBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                scrollView.fullScroll(View.FOCUS_UP);
+            }
+        } );
+
+        getArticle(articleURL);//获取文章内容
 
 
+        return view;
+    }
 
+    //获取文章内容
+    public void getArticle(final String Url){
         @SuppressLint("HandlerLeak") final Handler handler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -69,7 +92,7 @@ public class ArticleFragment extends Fragment {
             public void run() {
                 super.run();
                 try {
-                    Document document = Jsoup.connect(articleURL).get();
+                    Document document = Jsoup.connect(Url).get();
                     Element element = document.getElementById("article_show");
                     Elements elements=document.getElementsByClass("article_text")
                             .get(0).select("p");
@@ -79,7 +102,9 @@ public class ArticleFragment extends Fragment {
 
                     StringBuilder articleBuilder= new StringBuilder();
                     for(Element e:elements){
-                        articleBuilder.append("\n\n").append(e.text());
+                        if (!e.text().isEmpty()){
+                            articleBuilder.append("\n\n").append(e.text());
+                        }
                     }
 
                     Bundle bundle=new Bundle();
@@ -96,8 +121,6 @@ public class ArticleFragment extends Fragment {
                 }
             }
         }.start();
-
-        return view;
     }
 
 

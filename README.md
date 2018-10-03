@@ -22,3 +22,11 @@ git的使用
 [Java中byte[]和String的转换问题](https://www.jianshu.com/p/bcdc404de69b)  
 
 [Android runtime permission](https://www.jianshu.com/p/efaf04fee8cd)
+
+## 10.3
+实现了“随机文章”  
+实现了“播放音频”  
+（只能先下载后播放，下载后需要重新进入才能播放，seekbar不能拖动）  
+ 
+#### 遇到的坑：  
+[Android中File.exists()始终返回false/路径的坑](https://www.jianshu.com/p/ba66b29e617f)
