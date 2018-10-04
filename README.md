@@ -27,6 +27,9 @@ git的使用
 实现了“随机文章”  
 实现了“播放音频”  
 （只能先下载后播放，下载后需要重新进入才能播放，seekbar不能拖动）  
- 
+
 #### 遇到的坑：  
 [Android中File.exists()始终返回false/路径的坑](https://www.jianshu.com/p/ba66b29e617f)
+
+## 10.4  
+修复了seekbar无法正常使用的bug

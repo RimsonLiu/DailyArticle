@@ -1,18 +1,24 @@
 package com.rimson.c.dailyarticle.activity;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -24,14 +30,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.bean.Voice;
-import com.rimson.c.dailyarticle.uitl.DownloadCompleteReceiver;
 import com.rimson.c.dailyarticle.uitl.FileIsExists;
 import com.rimson.c.dailyarticle.uitl.NetworkChangeReceiver;
+import com.rimson.c.dailyarticle.uitl.DownloadCompleteReceiver;
 import com.rimson.c.dailyarticle.uitl.CalculateTime;
 
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 public class VoiceActivity extends AppCompatActivity {
     private String title;
@@ -61,11 +68,6 @@ public class VoiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-        }
-
         initViews();
         checkNetwork();
         download();
@@ -73,6 +75,7 @@ public class VoiceActivity extends AppCompatActivity {
 
     }
 
+    //初始化布局
     private void initViews(){
         final Voice voice=getIntent().getParcelableExtra("VOICE");
         this.title=voice.title;
@@ -102,8 +105,7 @@ public class VoiceActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int position=mediaPlayer.getCurrentPosition()/1000;
-                currentTV.setText(CalculateTime.calculateTime(position));
+                currentTV.setText(CalculateTime.calculateTime(seekBar.getProgress()));
             }
 
             @Override
@@ -113,7 +115,8 @@ public class VoiceActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mediaPlayer.seekTo(seekBar.getProgress());
+                //getProgress()返回秒，seekTo()传入毫秒
+                mediaPlayer.seekTo(seekBar.getProgress()*1000);
                 currentTV.setText(CalculateTime.calculateTime(mediaPlayer.getCurrentPosition()/1000));
                 isSeekBarChanging=false;
             }
@@ -129,11 +132,13 @@ public class VoiceActivity extends AppCompatActivity {
 
     }
 
+    //初始化MediaPlayer
     private void initMediaPlayer(){
         mediaPlayer=new MediaPlayer();
         try {
             mediaPlayer.reset();
             mediaPlayer.setDataSource(downloadPath+fileName);
+            mediaPlayer.setLooping(true);
             mediaPlayer.prepare();
         }catch (IOException e){
             e.printStackTrace();
@@ -145,6 +150,7 @@ public class VoiceActivity extends AppCompatActivity {
         seekBar.setMax(fullTime);
     }
 
+    //判断并执行播放或者暂停
     private void isPlayOrPause(){
         if (mediaPlayer!=null){
             if (!isPause){
@@ -176,6 +182,7 @@ public class VoiceActivity extends AppCompatActivity {
 
     }
 
+    //判断网络状况
     private void checkNetwork(){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -183,6 +190,7 @@ public class VoiceActivity extends AppCompatActivity {
         registerReceiver(networkChangeReceiver, intentFilter);
     }
 
+    //判断音频文件是否存在，存在则播放，不存在则下载
     private void download(){
         //动态获取写入权限
         if (ContextCompat.checkSelfPermission(VoiceActivity.this,permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
@@ -216,10 +224,8 @@ public class VoiceActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(networkChangeReceiver);
-        unregisterReceiver(downloadCompleteReceiver);
+    protected void onPause() {
+        super.onPause();
         if (timer!=null){
             timer.cancel();
             timer.purge();
@@ -231,4 +237,16 @@ public class VoiceActivity extends AppCompatActivity {
         }
         isPause=true;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkChangeReceiver);
+        unregisterReceiver(downloadCompleteReceiver);
+
+    }
+
+
 }
+
+
