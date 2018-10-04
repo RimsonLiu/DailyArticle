@@ -7,11 +7,11 @@ import android.widget.TextView;
 
 import com.rimson.c.dailyarticle.R;
 
-public class ViewHolder extends RecyclerView.ViewHolder {
+public class VoiceViewHolder extends RecyclerView.ViewHolder {
     public TextView numberTV,titleTV,authorTV;
     public ImageView imageView;
 
-    public ViewHolder(View itemView) {
+    public VoiceViewHolder(View itemView) {
         super(itemView);
         numberTV=(TextView)itemView.findViewById(R.id.numberTV);
         titleTV=(TextView)itemView.findViewById(R.id.titleTV);

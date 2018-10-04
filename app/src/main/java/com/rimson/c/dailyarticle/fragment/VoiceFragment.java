@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 
 import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.activity.VoiceActivity;
-import com.rimson.c.dailyarticle.adapter.RecyclerViewAdapter;
+import com.rimson.c.dailyarticle.adapter.VoiceRecyclerViewAdapter;
 import com.rimson.c.dailyarticle.bean.Voice;
 
 import org.jsoup.Jsoup;
@@ -63,10 +63,10 @@ public class VoiceFragment extends Fragment {
 
                     LinearLayoutManager layoutManager=new LinearLayoutManager(context);
                     recyclerView.setLayoutManager(layoutManager);
-                    RecyclerViewAdapter adapter=new RecyclerViewAdapter(context,voiceArrayList);
+                    VoiceRecyclerViewAdapter adapter=new VoiceRecyclerViewAdapter(context,voiceArrayList);
                     recyclerView.setAdapter(adapter);
 
-                    adapter.setOnMyItemClickListener(new RecyclerViewAdapter.OnMyItemClickListener() {
+                    adapter.setOnMyItemClickListener(new VoiceRecyclerViewAdapter.OnMyItemClickListener() {
                         @Override
                         public void MyClick(View view, int position) {
                             Voice voice=voiceArrayList.get(position);

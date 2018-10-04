@@ -1,4 +1,4 @@
-package com.rimson.c.dailyarticle.uitl;
+package com.rimson.c.dailyarticle.broadcast;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

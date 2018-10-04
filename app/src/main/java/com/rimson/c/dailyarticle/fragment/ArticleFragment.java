@@ -1,6 +1,9 @@
 package com.rimson.c.dailyarticle.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,8 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rimson.c.dailyarticle.R;
 
@@ -31,6 +36,7 @@ public class ArticleFragment extends Fragment {
 
     private TextView titleTV;
     private TextView articleTV;
+    private ImageView starBtn;
 
     @Nullable
     @Override
@@ -40,6 +46,13 @@ public class ArticleFragment extends Fragment {
 
         titleTV=(TextView)view.findViewById(R.id.article_title);
         articleTV=(TextView)view.findViewById(R.id.article);
+        starBtn=(ImageView)view.findViewById(R.id.star);
+        starBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         //随机文章
         Button rollBtn=(Button)view.findViewById(R.id.roll);
@@ -47,8 +60,17 @@ public class ArticleFragment extends Fragment {
         rollBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                articleURL="https://meiriyiwen.com/random";
-                getArticle(articleURL);
+                ConnectivityManager connectivityManager=(ConnectivityManager)getContext()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                if (networkInfo!=null&&networkInfo.isAvailable()){
+                    articleURL="https://meiriyiwen.com/random";
+                    getArticle(articleURL);
+                }else {
+                    Toast.makeText(getContext(),"当前网络不可用",Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
 

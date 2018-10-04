@@ -1,26 +1,25 @@
 package com.rimson.c.dailyarticle.activity;
 
-import android.annotation.SuppressLint;
 import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.Manifest.permission;
@@ -31,8 +30,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.bean.Voice;
 import com.rimson.c.dailyarticle.uitl.FileIsExists;
-import com.rimson.c.dailyarticle.uitl.NetworkChangeReceiver;
-import com.rimson.c.dailyarticle.uitl.DownloadCompleteReceiver;
+import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
+import com.rimson.c.dailyarticle.broadcast.DownloadCompleteReceiver;
 import com.rimson.c.dailyarticle.uitl.CalculateTime;
 
 import java.io.IOException;
@@ -63,12 +62,22 @@ public class VoiceActivity extends AppCompatActivity {
     private NetworkChangeReceiver networkChangeReceiver;
     private DownloadCompleteReceiver downloadCompleteReceiver;
 
+    public static Notification notification;
+    private static NotificationManager notificationManager;
+    private static Context mContext;
+
+    static String PLAYER_TAG;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice);
 
+        mContext=this;
+        PLAYER_TAG=getPackageName();
+
         initViews();
+        initNotification();
         checkNetwork();
         download();
         checkDownload();
@@ -132,6 +141,46 @@ public class VoiceActivity extends AppCompatActivity {
 
     }
 
+    //初始化通知栏
+    private void initNotification(){
+        notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder=new NotificationCompat.Builder(this,"voice");
+        notification=new Notification();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel=new NotificationChannel("voice","通知栏",NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        RemoteViews remoteViews=new RemoteViews(getPackageName(),R.layout.notification);
+        remoteViews.setTextViewText(R.id.ntfTitle,title);
+        remoteViews.setTextViewText(R.id.ntfAuthor,author);
+        remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.pause);
+        remoteViews.setImageViewResource(R.id.close,R.drawable.close);
+
+        Intent intentPause=new Intent(PLAYER_TAG);
+        intentPause.putExtra("STATUS","pause");
+        PendingIntent pIntentPause=PendingIntent.getBroadcast(this,2,intentPause,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.playOrPause,pIntentPause);
+
+        Intent notificationIntent=new Intent(this,VoiceActivity.class);
+        PendingIntent intent=PendingIntent.getActivity(this,0,notificationIntent,0);
+        mBuilder.setContent(remoteViews)
+                .setSmallIcon(R.drawable.icon)
+                .setContentIntent(intent);
+
+        notification=mBuilder.build();
+        notification.flags= Notification.FLAG_NO_CLEAR;//滑动或点击时不被清除
+        notificationManager.notify(PLAYER_TAG,111,notification);
+    }
+
+    //更新通知栏状态
+    private void updateNotification(boolean isPause){
+        if (!isPause){
+            
+        }
+    }
+
     //初始化MediaPlayer
     private void initMediaPlayer(){
         mediaPlayer=new MediaPlayer();
@@ -193,7 +242,7 @@ public class VoiceActivity extends AppCompatActivity {
     //判断音频文件是否存在，存在则播放，不存在则下载
     private void download(){
         //动态获取写入权限
-        if (ContextCompat.checkSelfPermission(VoiceActivity.this,permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(mContext,permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(VoiceActivity.this,
                     new String[]{permission.WRITE_EXTERNAL_STORAGE},
                     23);
@@ -212,31 +261,18 @@ public class VoiceActivity extends AppCompatActivity {
             DownloadManager downloadManager=(DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);
 
-            Toast.makeText(VoiceActivity.this,"开始下载音频",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext,"开始下载音频",Toast.LENGTH_SHORT).show();
         }
 
     }
 
+    //监听下载完成
     private void checkDownload(){
         IntentFilter intentFilter=new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         downloadCompleteReceiver=new DownloadCompleteReceiver();
         registerReceiver(downloadCompleteReceiver,intentFilter);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (timer!=null){
-            timer.cancel();
-            timer.purge();
-            timer=null;
-        }
-        if (mediaPlayer!=null){
-            mediaPlayer.release();
-            mediaPlayer=null;
-        }
-        isPause=true;
-    }
 
     @Override
     protected void onDestroy() {
@@ -244,6 +280,21 @@ public class VoiceActivity extends AppCompatActivity {
         unregisterReceiver(networkChangeReceiver);
         unregisterReceiver(downloadCompleteReceiver);
 
+        if (timer!=null){
+            timer.cancel();
+            timer.purge();
+            timer=null;
+        }
+
+        if (mediaPlayer!=null){
+            mediaPlayer.release();
+            mediaPlayer=null;
+        }
+
+        if (notificationManager!=null){
+            notificationManager.cancel(PLAYER_TAG,111);
+        }
+        isPause= true;
     }
 
 

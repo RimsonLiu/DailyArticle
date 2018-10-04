@@ -15,7 +15,7 @@ import com.rimson.c.dailyarticle.fragment.ArticleFragment;
 import com.rimson.c.dailyarticle.fragment.CollectionFragment;
 import com.rimson.c.dailyarticle.fragment.VoiceFragment;
 import com.rimson.c.dailyarticle.adapter.ContentPagerAdapter;
-import com.rimson.c.dailyarticle.uitl.NetworkChangeReceiver;
+import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
 
 import java.util.ArrayList;
 
