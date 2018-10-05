@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,7 +29,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.rimson.c.dailyarticle.R;
+import com.rimson.c.dailyarticle.bean.Collection;
 import com.rimson.c.dailyarticle.bean.Voice;
+import com.rimson.c.dailyarticle.db.Operator;
 import com.rimson.c.dailyarticle.uitl.FileIsExists;
 import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
 import com.rimson.c.dailyarticle.broadcast.DownloadCompleteReceiver;
@@ -46,15 +49,18 @@ public class VoiceActivity extends AppCompatActivity {
     private String mp3URL;
     private String downloadPath;
     private String fileName;
+    private boolean voiceStared;
 
     private TextView currentTV;
     private TextView fullTV;
     private SeekBar seekBar;
+    private ImageView voiceStar;
     private ImageView imageBtn;
 
     private Timer timer;
     private MediaPlayer mediaPlayer;
     private boolean isPause=false;
+    private boolean isFirst=true;
     private boolean isSeekBarChanging=false;
 
     public static long downloadID;
@@ -66,21 +72,30 @@ public class VoiceActivity extends AppCompatActivity {
     private static NotificationManager notificationManager;
     private static Context mContext;
 
+    private Operator operator;
+
     static String PLAYER_TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_voice);
 
+        setContentView(R.layout.activity_voice);
         mContext=this;
         PLAYER_TAG=getPackageName();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         initViews();
         initNotification();
         checkNetwork();
-        download();
-        checkDownload();
+        if (isFirst){
+            download();
+            checkDownload();
+            isFirst=false;
+        }
 
     }
 
@@ -91,6 +106,9 @@ public class VoiceActivity extends AppCompatActivity {
         this.author=voice.author;
         this.imgURL=voice.imgURL;
         this.mp3URL=voice.mp3URL;
+
+        operator=new Operator(mContext);
+        voiceStared=operator.dataExists(new Collection("VOICE",title,author,null));
 
         setTitle("播放");
 
@@ -131,7 +149,28 @@ public class VoiceActivity extends AppCompatActivity {
             }
         });
 
-        imageBtn=(ImageView) findViewById(R.id.imageBtn);
+        voiceStar=(ImageView)findViewById(R.id.voice_star);
+        if (voiceStared){
+            voiceStar.setImageResource(R.drawable.stared);
+        }
+        voiceStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (voiceStared){
+                    voiceStared=false;
+                    operator.delete(new Collection("VOICE",title,author,null));
+                    voiceStar.setImageResource(R.drawable.star);
+                    Toast.makeText(mContext,"取消收藏",Toast.LENGTH_SHORT).show();
+                }else {
+                    voiceStared=true;
+                    operator.add(new Collection("VOICE",title,author,downloadPath+fileName));
+                    voiceStar.setImageResource(R.drawable.stared);
+                    Toast.makeText(mContext,"收藏成功",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        imageBtn=(ImageView) findViewById(R.id.voice_pause);
         imageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,7 +287,6 @@ public class VoiceActivity extends AppCompatActivity {
                     23);
         }
 
-        DownloadManager.Request request=new DownloadManager.Request(Uri.parse(mp3URL));
         downloadPath=Environment.getExternalStorageDirectory().getPath()+"/dailyarticle/sound/";
         fileName=title+".mp3";
 
@@ -257,6 +295,7 @@ public class VoiceActivity extends AppCompatActivity {
             initMediaPlayer();
             isPlayOrPause();
         }else {
+            DownloadManager.Request request=new DownloadManager.Request(Uri.parse(mp3URL));
             request.setDestinationInExternalPublicDir("/dailyarticle/sound/",fileName);
             DownloadManager downloadManager=(DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);

@@ -15,6 +15,6 @@ public class CollectionViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         titleTV=(TextView)itemView.findViewById(R.id.cltTitle);
         authorTV=(TextView)itemView.findViewById(R.id.cltAuthor);
-        imageView=(ImageView)itemView.findViewById(R.id.star);
+        imageView=(ImageView)itemView.findViewById(R.id.cltStar);
     }
 }

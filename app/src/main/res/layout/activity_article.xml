@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.ArticleFragment"
-    android:id="@+id/scroll_view">
-
+    tools:context=".activity.ArticleActivity"
+    android:id="@+id/article_scroll">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +17,7 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/article_title"
+                android:id="@+id/articleTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -28,18 +27,18 @@
                 android:layout_marginStart="10dp" />
 
             <ImageView
-                android:id="@+id/article_star"
+                android:id="@+id/articleStar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:src="@drawable/star" />
+                android:src="@drawable/stared" />
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/article"
+            android:id="@+id/Article"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -49,27 +48,11 @@
             android:lineSpacingMultiplier="1.2"
             />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/scrollUP"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/scrollUp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
-
-            <Button
-                android:id="@+id/roll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                />
-
-        </LinearLayout>
+            android:layout_gravity="center"/>
 
     </LinearLayout>
-
 </ScrollView>

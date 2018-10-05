@@ -3,6 +3,7 @@ package com.rimson.c.dailyarticle.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.rimson.c.dailyarticle.bean.Collection;
 
@@ -13,26 +14,26 @@ public class Operator {
     private SQLiteDatabase database;
 
     public Operator(Context context){
-        dbHelper=new OpenHelper(context,"data",null,1);
+        dbHelper=new OpenHelper(context,"Collection.db",null,1);
         database=dbHelper.getWritableDatabase();
     }
 
     //添加
     public void add(Collection collection){
-        database.execSQL("insert into data values(?,?,?,?)",
+        database.execSQL("insert into collection values(?,?,?,?)",
                 new Object[]{collection.type,collection.title,collection.author,collection.content});
     }
 
     //删除
     public void delete(Collection collection){
-        database.execSQL("delete from data where type=? and title=? and author=?",
+        database.execSQL("delete from collection where type=? and title=? and author=?",
                 new String[]{collection.type,collection.title,collection.author});
     }
 
     //查询单个
     public Collection queryOne(Collection collection){
         Collection result = null;
-        Cursor cursor=database.rawQuery("select * from data where type=? and title=? and author=?",
+        Cursor cursor=database.rawQuery("select * from collection where type=? and title=? and author=?",
                 new String[]{collection.type,collection.title,collection.author});
         while (cursor.moveToNext()){
             result.type=cursor.getString(0);
@@ -47,7 +48,7 @@ public class Operator {
     //查询所有
     public ArrayList<Collection> queryAll(){
         ArrayList<Collection> collections=new ArrayList<Collection>();
-        Cursor cursor=database.rawQuery("select * from data",null);
+        Cursor cursor=database.rawQuery("select * from collection",null);
         while (cursor.moveToNext()){
             Collection collection=new Collection(cursor.getString(0),
                     cursor.getString(1),
@@ -62,7 +63,7 @@ public class Operator {
     //检查是否已经存在
     public boolean dataExists(Collection collection){
         SQLiteDatabase db=dbHelper.getWritableDatabase();
-        String query="Select * from data where type=? and title=? and author=?";
+        String query="Select * from collection where type=? and title=? and author=?";
         Cursor cursor=db.rawQuery(query,new String[]{collection.type,collection.title,collection.author});
         if (cursor.getCount()>0){
             cursor.close();

@@ -6,7 +6,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
 public class OpenHelper extends SQLiteOpenHelper {
-    public static final String CREATE_DATABASE= "create table rimsonData(name varchar(200) primary key,number varchar(200),introduce varchar(200))";
+    public static final String CREATE_DATABASE= "create table collection("
+    +"type text,"
+    +"title text,"
+    +"author text,"
+    +"content text)";
     private Context mContext;
 
     public OpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {

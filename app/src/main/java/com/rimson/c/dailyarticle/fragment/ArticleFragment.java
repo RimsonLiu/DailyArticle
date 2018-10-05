@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rimson.c.dailyarticle.R;
+import com.rimson.c.dailyarticle.activity.MainActivity;
+import com.rimson.c.dailyarticle.bean.Collection;
+import com.rimson.c.dailyarticle.db.Operator;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,28 +33,52 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 public class ArticleFragment extends Fragment {
+    private String articleURL="https://meiriyiwen.com/";
     private String title;
     private String author;
+    private String article;
+    private boolean articleStared;
 
-    private String articleURL="https://meiriyiwen.com/";
 
     private TextView titleTV;
     private TextView articleTV;
     private ImageView starBtn;
 
+    private Operator operator;
+
     @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        assert inflater != null;
+
+        View view=initViews(inflater,container);
+        getArticle(articleURL);//获取文章内容
+
+        return view;
+    }
+
+    //初始化布局
+    public View initViews(@Nullable LayoutInflater inflater, @Nullable ViewGroup container){
         View view=inflater.inflate(R.layout.fragment_article,container,false);
+
+        operator=new Operator(getContext());
 
         titleTV=(TextView)view.findViewById(R.id.article_title);
         articleTV=(TextView)view.findViewById(R.id.article);
-        starBtn=(ImageView)view.findViewById(R.id.star);
+        starBtn=(ImageView)view.findViewById(R.id.article_star);
         starBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (articleStared){
+                    articleStared=false;
+                    operator.delete(new Collection("ARTICLE",title,author,null));
+                    starBtn.setImageResource(R.drawable.star);
+                    Toast.makeText(getContext(),"取消收藏",Toast.LENGTH_SHORT).show();
+                }else {
+                    articleStared=true;
+                    operator.add(new Collection("ARTICLE",title,author,article));
+                    starBtn.setImageResource(R.drawable.stared);
+                    Toast.makeText(getContext(),"收藏成功",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -85,9 +113,6 @@ public class ArticleFragment extends Fragment {
             }
         } );
 
-        getArticle(articleURL);//获取文章内容
-
-
         return view;
     }
 
@@ -99,12 +124,21 @@ public class ArticleFragment extends Fragment {
 
                 if(msg.what==1){
                     Bundle bundle=msg.getData();
-                    String title=bundle.getString("TITLE")+"\n";
-                    String author=bundle.getString("AUTHOR");
-                    String article=author+bundle.getString("ARTICLE");
+                    title=bundle.getString("TITLE")+"\n";
+                    author=bundle.getString("AUTHOR");
+                    article=bundle.getString("ARTICLE");
+
                     titleTV.setText(title);
-                    articleTV.setText(article);
+                    articleTV.setText(author+article);
                     articleTV.setMovementMethod(ScrollingMovementMethod.getInstance());
+
+                    //判断是否已经收藏
+                    articleStared=operator.dataExists(new Collection("ARTICLE",title,author,null));
+                    if (articleStared){
+                        starBtn.setImageResource(R.drawable.stared);
+                    }else {
+                        starBtn.setImageResource(R.drawable.star);
+                    }
                 }
             }
         };

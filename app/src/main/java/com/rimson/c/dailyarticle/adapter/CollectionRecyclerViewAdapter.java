@@ -30,6 +30,9 @@ public class CollectionRecyclerViewAdapter extends RecyclerView.Adapter<Collecti
         this.collectionArrayList=collectionArrayList;
     }
 
+    public void update(ArrayList<Collection> list){
+        this.collectionArrayList=list;
+    }
 
     @NonNull
     @Override
