@@ -1,20 +1,25 @@
 package com.rimson.c.dailyarticle.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.activity.VoiceActivity;
+import static com.rimson.c.dailyarticle.activity.VoiceActivity.remoteViews;
 
 import java.io.IOException;
 
 public class VoiceService extends Service {
     public static String dataSource;
 
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     private VoiceBinder voiceBinder=new VoiceBinder();
 
     @Override
@@ -56,12 +61,14 @@ public class VoiceService extends Service {
         public void play(){
             if(!mediaPlayer.isPlaying()){
                 mediaPlayer.start();
+                remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.pause);
             }
         }
 
         public void pause(){
             if (mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
+                remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.play);
             }
         }
 
@@ -73,9 +80,14 @@ public class VoiceService extends Service {
             return mediaPlayer.getDuration()/1000;
         }
 
+        public boolean getStatus(){
+            return mediaPlayer.isPlaying();
+        }
+
         public void seekToPosition(int sec){
             mediaPlayer.seekTo(sec);
         }
 
     }
+
 }

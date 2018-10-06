@@ -29,6 +29,8 @@
         </activity>
 
         <service android:name=".service.VoiceService" />
+        <receiver android:name=".service.VoiceService$ButtonBroadcastReceiver"/>
+        <receiver android:name=".broadcast.VoiceBroadCast"/>
     </application>
 
 </manifest>

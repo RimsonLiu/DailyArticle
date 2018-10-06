@@ -21,7 +21,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -35,6 +34,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.bean.Collection;
 import com.rimson.c.dailyarticle.bean.Voice;
+import com.rimson.c.dailyarticle.broadcast.VoiceBroadCast;
 import com.rimson.c.dailyarticle.db.Operator;
 import com.rimson.c.dailyarticle.service.VoiceService;
 import com.rimson.c.dailyarticle.uitl.FileIsExists;
@@ -42,9 +42,7 @@ import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
 import com.rimson.c.dailyarticle.broadcast.DownloadCompleteReceiver;
 import com.rimson.c.dailyarticle.uitl.CalculateTime;
 
-import java.io.IOException;
 import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class VoiceActivity extends AppCompatActivity {
@@ -66,19 +64,20 @@ public class VoiceActivity extends AppCompatActivity {
     private boolean isPause=false;
     private boolean isFirst=true;
 
+    public static RemoteViews remoteViews;
+    public final static String ACTION_BUTTON="com.rimson.c.dailyarticle.ButtonClick";
+
     public static long downloadID;
 
     private NetworkChangeReceiver networkChangeReceiver;
     private DownloadCompleteReceiver downloadCompleteReceiver;
 
     public static Notification notification;
-    private static NotificationManager notificationManager;
+    public static NotificationManager notificationManager;
     private static Context mContext;
 
     private Operator operator;
     private VoiceService.VoiceBinder voiceBinder;
-
-    static String PLAYER_TAG;
 
     private Handler mHandler=new Handler();
     private Runnable mRunnable=new Runnable() {
@@ -86,6 +85,14 @@ public class VoiceActivity extends AppCompatActivity {
         public void run() {
             seekBar.setProgress(voiceBinder.getProgress());
             currentTV.setText(CalculateTime.calculateTime(voiceBinder.getProgress()));
+            seekBar.setMax(voiceBinder.getDuration());
+            fullTV.setText(CalculateTime.calculateTime(voiceBinder.getDuration()));
+
+            if (voiceBinder.getStatus()){
+                imageBtn.setImageResource(R.drawable.pause);
+            }else {
+                imageBtn.setImageResource(R.drawable.play);
+            }
             mHandler.post(mRunnable);
         }
     };
@@ -96,12 +103,7 @@ public class VoiceActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_voice);
         mContext=this;
-        PLAYER_TAG=getPackageName();
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         initViews();
         initNotification();
         checkNetwork();
@@ -110,6 +112,12 @@ public class VoiceActivity extends AppCompatActivity {
             checkDownload();
             isFirst=false;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
 
     }
 
@@ -180,7 +188,7 @@ public class VoiceActivity extends AppCompatActivity {
                     imageBtn.setImageResource(R.drawable.play);
                     isPause=true;
                 }
-
+                updateNotification(isPause);
             }
         });
 
@@ -197,34 +205,37 @@ public class VoiceActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
 
-        RemoteViews remoteViews=new RemoteViews(getPackageName(),R.layout.notification);
+        remoteViews=new RemoteViews(getPackageName(),R.layout.notification);
         remoteViews.setTextViewText(R.id.ntfTitle,title);
         remoteViews.setTextViewText(R.id.ntfAuthor,author);
         remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.pause);
         remoteViews.setImageViewResource(R.id.close,R.drawable.close);
 
-        Intent intentPause=new Intent(PLAYER_TAG);
-        intentPause.putExtra("STATUS","pause");
-        PendingIntent pIntentPause=PendingIntent.getBroadcast(this,2,intentPause,
+        Intent intentPlay=new Intent(this,VoiceBroadCast.class);
+        intentPlay.setAction("play_or_pause");
+        PendingIntent pIntentPlay=PendingIntent.getBroadcast(this,1,intentPlay,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.playOrPause,pIntentPause);
+        remoteViews.setOnClickPendingIntent(R.id.playOrPause,pIntentPlay);
 
-        Intent notificationIntent=new Intent(this,VoiceActivity.class);
+        Intent notificationIntent=new Intent(this,VoiceService.class);
         PendingIntent intent=PendingIntent.getActivity(this,0,notificationIntent,0);
         mBuilder.setContent(remoteViews)
                 .setSmallIcon(R.drawable.icon)
                 .setContentIntent(intent);
 
         notification=mBuilder.build();
-        notification.flags= Notification.FLAG_NO_CLEAR;//滑动或点击时不被清除
-        notificationManager.notify(PLAYER_TAG,111,notification);
+        notification.flags= Notification.FLAG_ONGOING_EVENT;//滑动或点击时不被清除
+        notificationManager.notify(ACTION_BUTTON,111,notification);
     }
 
     //更新通知栏状态
-    private void updateNotification(boolean isPause){
-        if (!isPause){
-            
+    public static void updateNotification(boolean isPause){
+        if (isPause){
+            remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.play);
+        }else {
+            remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.pause);
         }
+        notificationManager.notify(ACTION_BUTTON,111,notification);
     }
 
     //判断网络状况
@@ -324,9 +335,6 @@ public class VoiceActivity extends AppCompatActivity {
             timer=null;
         }
 
-        if (notificationManager!=null){
-            notificationManager.cancel(PLAYER_TAG,111);
-        }
         isPause= true;
     }
 

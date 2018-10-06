@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -16,6 +17,9 @@ import com.rimson.c.dailyarticle.fragment.CollectionFragment;
 import com.rimson.c.dailyarticle.fragment.VoiceFragment;
 import com.rimson.c.dailyarticle.adapter.ContentPagerAdapter;
 import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
+
+import static com.rimson.c.dailyarticle.activity.VoiceActivity.ACTION_BUTTON;
+import static com.rimson.c.dailyarticle.activity.VoiceActivity.notificationManager;
 
 import java.util.ArrayList;
 
@@ -92,14 +96,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"再按一次退出应用",Toast.LENGTH_SHORT).show();
             exitTime=System.currentTimeMillis();
         }else {
+            unregisterReceiver(networkChangeReceiver);
+            notificationManager.cancelAll();
             finish();
             System.exit(0);
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(networkChangeReceiver);
-    }
 }
