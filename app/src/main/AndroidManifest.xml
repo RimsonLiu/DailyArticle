@@ -27,6 +27,8 @@
         </activity>
         <activity android:name=".activity.ArticleActivity">
         </activity>
+
+        <service android:name=".service.VoiceService" />
     </application>
 
 </manifest>
