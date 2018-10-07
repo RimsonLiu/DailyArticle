@@ -53,12 +53,12 @@ public class ArticleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (articleStared){
                     articleStared=false;
-                    operator.delete(new Collection("ARTICLE",title,author,null));
+                    operator.delete(new Collection("ARTICLE",title,author,null,null));
                     star.setImageResource(R.drawable.star);
                     Toast.makeText(mContext,"取消收藏",Toast.LENGTH_SHORT).show();
                 }else {
                     articleStared=true;
-                    operator.add(new Collection("ARTICLE",title,author,article));
+                    operator.add(new Collection("ARTICLE",title,author,article,""));
                     star.setImageResource(R.drawable.stared);
                     Toast.makeText(mContext,"收藏成功",Toast.LENGTH_SHORT).show();
                 }

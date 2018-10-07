@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
@@ -37,6 +38,7 @@ import com.rimson.c.dailyarticle.bean.Voice;
 import com.rimson.c.dailyarticle.broadcast.VoiceBroadCast;
 import com.rimson.c.dailyarticle.db.Operator;
 import com.rimson.c.dailyarticle.service.VoiceService;
+import com.rimson.c.dailyarticle.uitl.BitmapUtil;
 import com.rimson.c.dailyarticle.uitl.FileIsExists;
 import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
 import com.rimson.c.dailyarticle.broadcast.DownloadCompleteReceiver;
@@ -76,6 +78,7 @@ public class VoiceActivity extends AppCompatActivity {
     public static NotificationManager notificationManager;
     private static Context mContext;
 
+    private BitmapUtil bitmapUtil;
     private Operator operator;
     private VoiceService.VoiceBinder voiceBinder;
 
@@ -114,23 +117,17 @@ public class VoiceActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-    }
-
     //初始化布局
     private void initViews(){
         final Voice voice=getIntent().getParcelableExtra("VOICE");
+        final String FROM=getIntent().getStringExtra("FROM");
         this.title=voice.title;
         this.author=voice.author;
         this.imgURL=voice.imgURL;
         this.mp3URL=voice.mp3URL;
 
         operator=new Operator(mContext);
-        voiceStared=operator.dataExists(new Collection("VOICE",title,author,null));
+        voiceStared=operator.dataExists(new Collection("VOICE",title,author,null,null));
 
         setTitle("播放");
 
@@ -138,12 +135,16 @@ public class VoiceActivity extends AppCompatActivity {
         TextView titleTV=(TextView)findViewById(R.id.voice_title);
         TextView authorTV=(TextView)findViewById(R.id.voice_author);
 
-        Glide
+        /*Glide
                 .with(getApplicationContext())
                 .load(imgURL)
                 .apply(new RequestOptions()
                 .fitCenter())
-                .into(imageView);
+                .into(imageView);*/
+
+        bitmapUtil=new BitmapUtil();
+        bitmapUtil.display(imageView,imgURL);
+
 
         titleTV.setText(title);
         authorTV.setText(author);
@@ -162,12 +163,12 @@ public class VoiceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (voiceStared){
                     voiceStared=false;
-                    operator.delete(new Collection("VOICE",title,author,null));
+                    operator.delete(new Collection("VOICE",title,author,null,null));
                     voiceStar.setImageResource(R.drawable.star);
                     Toast.makeText(mContext,"取消收藏",Toast.LENGTH_SHORT).show();
                 }else {
                     voiceStared=true;
-                    operator.add(new Collection("VOICE",title,author,downloadPath+fileName));
+                    operator.add(new Collection("VOICE",title,author,downloadPath+fileName,imgURL));
                     voiceStar.setImageResource(R.drawable.stared);
                     Toast.makeText(mContext,"收藏成功",Toast.LENGTH_SHORT).show();
                 }
@@ -217,7 +218,13 @@ public class VoiceActivity extends AppCompatActivity {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.playOrPause,pIntentPlay);
 
-        Intent notificationIntent=new Intent(this,VoiceService.class);
+        Intent intentClose=new Intent(this,VoiceBroadCast.class);
+        intentClose.setAction("close");
+        PendingIntent pIntentClose=PendingIntent.getBroadcast(this,2,intentClose,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.close,pIntentClose);
+
+        Intent notificationIntent=new Intent(this,VoiceActivity.class);
         PendingIntent intent=PendingIntent.getActivity(this,0,notificationIntent,0);
         mBuilder.setContent(remoteViews)
                 .setSmallIcon(R.drawable.icon)
@@ -236,6 +243,11 @@ public class VoiceActivity extends AppCompatActivity {
             remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.pause);
         }
         notificationManager.notify(ACTION_BUTTON,111,notification);
+    }
+
+    //清除通知
+    public static void clearNotification(){
+        notificationManager.cancelAll();
     }
 
     //判断网络状况
@@ -318,7 +330,7 @@ public class VoiceActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            voiceBinder.stop();
         }
 
     };

@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.bean.Voice;
+import com.rimson.c.dailyarticle.uitl.BitmapUtil;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ public class VoiceRecyclerViewAdapter extends RecyclerView.Adapter<VoiceViewHold
     private ArrayList<Voice> voiceArrayList;
     private Context context;
 
+    private BitmapUtil bitmapUtil;
     private OnMyItemClickListener listener;
 
     public interface OnMyItemClickListener{
@@ -50,11 +52,14 @@ public class VoiceRecyclerViewAdapter extends RecyclerView.Adapter<VoiceViewHold
         holder.titleTV.setText(thisVoice.title);
         holder.authorTV.setText(thisVoice.author);
 
-        Glide.with(context)
+        /*Glide.with(context)
                 .load(thisVoice.imgURL)
                 .apply(new RequestOptions()
                         .fitCenter())
-                .into(holder.imageView);
+                .into(holder.imageView);*/
+
+        bitmapUtil=new BitmapUtil();
+        bitmapUtil.display(holder.imageView,thisVoice.imgURL);
 
         if (listener!=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {

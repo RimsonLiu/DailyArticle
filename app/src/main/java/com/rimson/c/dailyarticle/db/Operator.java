@@ -14,14 +14,16 @@ public class Operator {
     private SQLiteDatabase database;
 
     public Operator(Context context){
-        dbHelper=new OpenHelper(context,"Collection.db",null,1);
+        dbHelper=new OpenHelper(context,"Collection.db",null,2);
         database=dbHelper.getWritableDatabase();
+        //database.execSQL("delete from collection");
+        //context.deleteDatabase("Collection.db");
     }
 
     //添加
     public void add(Collection collection){
-        database.execSQL("insert into collection values(?,?,?,?)",
-                new Object[]{collection.type,collection.title,collection.author,collection.content});
+        database.execSQL("insert into collection values(?,?,?,?,?)",
+                new Object[]{collection.type,collection.title,collection.author,collection.content,collection.url});
     }
 
     //删除
@@ -39,7 +41,6 @@ public class Operator {
             result.type=cursor.getString(0);
             result.title=cursor.getString(1);
             result.author=cursor.getString(2);
-            result.content=cursor.getString(3);
         }
         cursor.close();
         return result;
@@ -53,7 +54,8 @@ public class Operator {
             Collection collection=new Collection(cursor.getString(0),
                     cursor.getString(1),
                     cursor.getString(2),
-                    cursor.getString(3));
+                    cursor.getString(3),
+                    cursor.getString(4));
             collections.add(collection);
         }
         cursor.close();

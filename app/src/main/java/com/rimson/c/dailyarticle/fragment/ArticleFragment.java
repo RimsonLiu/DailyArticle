@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
+import android.text.method.Touch;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,17 +69,22 @@ public class ArticleFragment extends Fragment {
         starBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (articleStared){
-                    articleStared=false;
-                    operator.delete(new Collection("ARTICLE",title,author,null));
-                    starBtn.setImageResource(R.drawable.star);
-                    Toast.makeText(getContext(),"取消收藏",Toast.LENGTH_SHORT).show();
+                if (title==null){
+                    Toast.makeText(getContext(),"收藏失败",Toast.LENGTH_SHORT).show();
                 }else {
-                    articleStared=true;
-                    operator.add(new Collection("ARTICLE",title,author,article));
-                    starBtn.setImageResource(R.drawable.stared);
-                    Toast.makeText(getContext(),"收藏成功",Toast.LENGTH_SHORT).show();
+                    if (articleStared){
+                        articleStared=false;
+                        operator.delete(new Collection("ARTICLE",title,author,null,null));
+                        starBtn.setImageResource(R.drawable.star);
+                        Toast.makeText(getContext(),"取消收藏",Toast.LENGTH_SHORT).show();
+                    }else {
+                        articleStared=true;
+                        operator.add(new Collection("ARTICLE",title,author,article,""));
+                        starBtn.setImageResource(R.drawable.stared);
+                        Toast.makeText(getContext(),"收藏成功",Toast.LENGTH_SHORT).show();
+                    }
                 }
+
             }
         });
 
@@ -133,7 +139,7 @@ public class ArticleFragment extends Fragment {
                     articleTV.setMovementMethod(ScrollingMovementMethod.getInstance());
 
                     //判断是否已经收藏
-                    articleStared=operator.dataExists(new Collection("ARTICLE",title,author,null));
+                    articleStared=operator.dataExists(new Collection("ARTICLE",title,author,null,null));
                     if (articleStared){
                         starBtn.setImageResource(R.drawable.stared);
                     }else {

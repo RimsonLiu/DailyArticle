@@ -15,6 +15,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo!=null&&networkInfo.isAvailable()){
             //网络可用
+
         }else {
             Toast.makeText(context,"当前网络不可用",Toast.LENGTH_SHORT).show();
         }

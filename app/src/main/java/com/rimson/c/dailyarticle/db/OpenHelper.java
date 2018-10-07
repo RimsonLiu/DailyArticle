@@ -10,7 +10,8 @@ public class OpenHelper extends SQLiteOpenHelper {
     +"type text,"
     +"title text,"
     +"author text,"
-    +"content text)";
+    +"content text,"
+    +"url text)";
     private Context mContext;
 
     public OpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {

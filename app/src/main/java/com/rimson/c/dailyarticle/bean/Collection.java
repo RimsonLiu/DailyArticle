@@ -8,14 +8,16 @@ public class Collection implements Parcelable {
     public String title;
     public String author;
     public String content;
+    public String url;
 
     //type:ARTICLE，文章，content为正文
     //type:VOICE，声音，content为路径
-    public Collection(String type,String title, String author, String content){
+    public Collection(String type,String title, String author, String content,String URL){
         this.type=type;
         this.title=title;
         this.author=author;
         this.content=content;
+        this.url=URL;
     }
 
     protected Collection(Parcel in) {
@@ -23,6 +25,7 @@ public class Collection implements Parcelable {
         title = in.readString();
         author = in.readString();
         content = in.readString();
+        url=in.readString();
     }
 
     public static final Creator<Collection> CREATOR = new Creator<Collection>() {
@@ -48,5 +51,6 @@ public class Collection implements Parcelable {
         dest.writeString(title);
         dest.writeString(author);
         dest.writeString(content);
+        dest.writeString(url);
     }
 }

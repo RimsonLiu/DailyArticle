@@ -19,6 +19,7 @@ import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.activity.VoiceActivity;
 import com.rimson.c.dailyarticle.adapter.VoiceRecyclerViewAdapter;
 import com.rimson.c.dailyarticle.bean.Voice;
+import com.rimson.c.dailyarticle.uitl.BitmapUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 import android.util.Base64;
 
 public class VoiceFragment extends Fragment {
-    private ArrayList<Voice> voiceArrayList;
+    public static ArrayList<Voice> voiceArrayList;
     private ArrayList<Voice> list=new ArrayList<>();
 
     private String Url="http://voice.meiriyiwen.com/";
@@ -72,6 +73,7 @@ public class VoiceFragment extends Fragment {
                             Voice voice=voiceArrayList.get(position);
                             Intent intent=new Intent(context,VoiceActivity.class);
                             intent.putExtra("VOICE",voice);
+                            intent.putExtra("FROM","VoiceFragment");
                             startActivity(intent);
                         }
                     });

@@ -76,9 +76,9 @@ public class CollectionFragment extends Fragment {
                     startActivity(intent);
                 }else {
                     Intent intent=new Intent(context,VoiceActivity.class);
-                    Voice voice=new Voice(null,collection.title,collection.author,null,null);
+                    Voice voice=new Voice(null,collection.title,collection.author,collection.url,null);
                     intent.putExtra("VOICE",voice);
-                    intent.putExtra("FROM","LOCAL");
+                    intent.putExtra("FROM","CollectionFragment");
                     startActivity(intent);
                 }
             }
