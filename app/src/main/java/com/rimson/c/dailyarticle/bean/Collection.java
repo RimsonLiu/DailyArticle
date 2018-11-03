@@ -12,20 +12,24 @@ public class Collection implements Parcelable {
 
     //type:ARTICLE，文章，content为正文
     //type:VOICE，声音，content为路径
-    public Collection(String type,String title, String author, String content,String URL){
-        this.type=type;
-        this.title=title;
-        this.author=author;
-        this.content=content;
-        this.url=URL;
+    public Collection(String type, String title, String author, String content, String URL) {
+        this.type = type;
+        this.title = title;
+        this.author = author;
+        this.content = content;
+        this.url = URL;
     }
 
-    protected Collection(Parcel in) {
+    public Collection() {
+
+    }
+
+    private Collection(Parcel in) {
         type = in.readString();
         title = in.readString();
         author = in.readString();
         content = in.readString();
-        url=in.readString();
+        url = in.readString();
     }
 
     public static final Creator<Collection> CREATOR = new Creator<Collection>() {

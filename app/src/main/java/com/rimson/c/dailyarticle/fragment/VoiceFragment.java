@@ -19,7 +19,6 @@ import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.activity.VoiceActivity;
 import com.rimson.c.dailyarticle.adapter.VoiceRecyclerViewAdapter;
 import com.rimson.c.dailyarticle.bean.Voice;
-import com.rimson.c.dailyarticle.uitl.BitmapUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,22 +29,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import android.util.Base64;
 
 public class VoiceFragment extends Fragment {
     public static ArrayList<Voice> voiceArrayList;
-    private ArrayList<Voice> list=new ArrayList<>();
-
-    private String Url="http://voice.meiriyiwen.com/";
+    private ArrayList<Voice> list = new ArrayList<>();
 
     private RecyclerView recyclerView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_voice,container,false);
+        View view = inflater.inflate(R.layout.fragment_voice, container, false);
 
-        recyclerView=(RecyclerView)view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         getVoice();//获取列表信息
 
@@ -53,27 +51,27 @@ public class VoiceFragment extends Fragment {
     }
 
     //获取列表信息
-    private void getVoice(){
-        @SuppressLint("HandlerLeak") final Handler handler=new Handler(){
+    private void getVoice() {
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                if(msg.what==1){
-                    final Context context=getActivity();
-                    Bundle bundle=msg.getData();
-                    voiceArrayList=bundle.getParcelableArrayList("LIST");
+                if (msg.what == 1) {
+                    final Context context = getActivity();
+                    Bundle bundle = msg.getData();
+                    voiceArrayList = bundle.getParcelableArrayList("LIST");
 
-                    LinearLayoutManager layoutManager=new LinearLayoutManager(context);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(context);
                     recyclerView.setLayoutManager(layoutManager);
-                    VoiceRecyclerViewAdapter adapter=new VoiceRecyclerViewAdapter(context,voiceArrayList);
+                    VoiceRecyclerViewAdapter adapter = new VoiceRecyclerViewAdapter(voiceArrayList);
                     recyclerView.setAdapter(adapter);
 
                     adapter.setOnMyItemClickListener(new VoiceRecyclerViewAdapter.OnMyItemClickListener() {
                         @Override
                         public void MyClick(View view, int position) {
-                            Voice voice=voiceArrayList.get(position);
-                            Intent intent=new Intent(context,VoiceActivity.class);
-                            intent.putExtra("VOICE",voice);
-                            intent.putExtra("FROM","VoiceFragment");
+                            Voice voice = voiceArrayList.get(position);
+                            Intent intent = new Intent(context, VoiceActivity.class);
+                            intent.putExtra("VOICE", voice);
+                            intent.putExtra("FROM", "VoiceFragment");
                             startActivity(intent);
                         }
                     });
@@ -85,43 +83,43 @@ public class VoiceFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    Document doc=  Jsoup.connect("http://voice.meiriyiwen.com/").get();
+                    Document doc = Jsoup.connect("http://voice.meiriyiwen.com/").get();
 
-                    Elements elements=doc.body().getElementsByClass("list_box");
-                    for (Element e:elements){
+                    Elements elements = doc.body().getElementsByClass("list_box");
+                    for (Element e : elements) {
 
-                        String number=e.select(".voice_tag").text();
+                        String number = e.select(".voice_tag").text();
 
-                        String title=e.select(".list_author").get(0)
+                        String title = e.select(".list_author").get(0)
                                 .select("a").text();
 
-                        String author=e.select(".author_name").get(0)
+                        String author = e.select(".author_name").get(0)
                                 .text();
 
-                        String imgURL=e.select("a.box_list_img").select("img")
+                        String imgURL = e.select("a.box_list_img").select("img")
                                 .attr("abs:src");
 
-                        String newURL=e.select(".box_list_img")
+                        String newURL = e.select(".box_list_img")
                                 .attr("abs:href");
 
-                        Document swfDoc=Jsoup.connect(newURL).get();
-                        String swfURL=swfDoc.body().select(".p_file").select("embed")
+                        Document swfDoc = Jsoup.connect(newURL).get();
+                        String swfURL = swfDoc.body().select(".p_file").select("embed")
                                 .attr("src");
-                        String rex="=(.*?)&";
+                        String rex = "=(.*?)&";
                         Pattern pattern = Pattern.compile(rex);// 匹配的模式
                         Matcher matcher = pattern.matcher(swfURL);
                         matcher.find();
-                        String uncodedURL=matcher.group(1);
-                        String mp3URL = new String(Base64.decode(uncodedURL,Base64.DEFAULT));
+                        String uncodedURL = matcher.group(1);
+                        String mp3URL = new String(Base64.decode(uncodedURL, Base64.DEFAULT));
 
-                        Voice voice=new Voice(number,title,author,imgURL,mp3URL);
+                        Voice voice = new Voice(number, title, author, imgURL, mp3URL);
                         list.add(voice);
                     }
-                    Message message=new Message();
-                    Bundle bundle=new Bundle();
-                    bundle.putParcelableArrayList("LIST",list);
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList("LIST", list);
                     message.setData(bundle);
-                    message.what=1;
+                    message.what = 1;
                     handler.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();

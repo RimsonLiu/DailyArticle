@@ -6,17 +6,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
 public class OpenHelper extends SQLiteOpenHelper {
-    public static final String CREATE_DATABASE= "create table collection("
-    +"type text,"
-    +"title text,"
-    +"author text,"
-    +"content text,"
-    +"url text)";
-    private Context mContext;
+    private static final String CREATE_DATABASE = "create table collection("
+            + "type text,"
+            + "title text,"
+            + "author text,"
+            + "content text,"
+            + "url text)";
 
-    public OpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+    OpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
-        mContext=context;
     }
 
     @Override

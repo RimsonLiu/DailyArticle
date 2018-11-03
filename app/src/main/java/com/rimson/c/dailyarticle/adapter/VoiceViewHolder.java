@@ -8,14 +8,14 @@ import android.widget.TextView;
 import com.rimson.c.dailyarticle.R;
 
 public class VoiceViewHolder extends RecyclerView.ViewHolder {
-    public TextView numberTV,titleTV,authorTV;
-    public ImageView imageView;
+    public TextView numberTV, titleTV, authorTV;
+    ImageView imageView;
 
-    public VoiceViewHolder(View itemView) {
+    VoiceViewHolder(View itemView) {
         super(itemView);
-        numberTV=(TextView)itemView.findViewById(R.id.numberTV);
-        titleTV=(TextView)itemView.findViewById(R.id.titleTV);
-        authorTV=(TextView)itemView.findViewById(R.id.authorTV);
-        imageView=(ImageView)itemView.findViewById(R.id.img);
+        numberTV = itemView.findViewById(R.id.numberTV);
+        titleTV = itemView.findViewById(R.id.titleTV);
+        authorTV = itemView.findViewById(R.id.authorTV);
+        imageView = itemView.findViewById(R.id.img);
     }
 }

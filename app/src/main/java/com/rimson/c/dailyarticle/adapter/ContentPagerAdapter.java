@@ -3,12 +3,8 @@ package com.rimson.c.dailyarticle.adapter;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-
-import com.rimson.c.dailyarticle.bean.Collection;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ContentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
     private ArrayList<Fragment> fragmentList;
@@ -16,8 +12,8 @@ public class ContentPagerAdapter extends android.support.v4.app.FragmentPagerAda
 
     public ContentPagerAdapter(FragmentManager fm, ArrayList<Fragment> list, String[] titles) {
         super(fm);
-        this.fragmentList=list;
-        this.titles=titles;
+        this.fragmentList = list;
+        this.titles = titles;
     }
 
     @Override

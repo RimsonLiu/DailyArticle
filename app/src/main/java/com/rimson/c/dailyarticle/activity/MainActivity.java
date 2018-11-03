@@ -1,38 +1,37 @@
 package com.rimson.c.dailyarticle.activity;
 
 import android.content.IntentFilter;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-
 import com.rimson.c.dailyarticle.R;
+import com.rimson.c.dailyarticle.adapter.ContentPagerAdapter;
+import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
 import com.rimson.c.dailyarticle.fragment.ArticleFragment;
 import com.rimson.c.dailyarticle.fragment.CollectionFragment;
 import com.rimson.c.dailyarticle.fragment.VoiceFragment;
-import com.rimson.c.dailyarticle.adapter.ContentPagerAdapter;
-import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
-
-import static com.rimson.c.dailyarticle.activity.VoiceActivity.ACTION_BUTTON;
-import static com.rimson.c.dailyarticle.activity.VoiceActivity.notificationManager;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static com.rimson.c.dailyarticle.activity.VoiceActivity.notificationManager;
 
 
 public class MainActivity extends AppCompatActivity {
-    private String[] titles= new String[]{"文章", "声音", "收藏"};
+    private String[] titles = new String[]{"文章", "声音", "收藏"};
 
-    private ArrayList<Fragment>fragments=new ArrayList<Fragment>();
+    private ArrayList<Fragment> fragments = new ArrayList<>();
 
     private NetworkChangeReceiver networkChangeReceiver;
 
-    private long exitTime=0;
-    public static ViewPager viewPager;
+    private long exitTime = 0;
+    public ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,56 +45,54 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 初始化布局
      */
-    private void initViews(){
-        /**
-         * 尝试实现滑动隐藏显示标题栏
-         * Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
+    private void initViews() {
         setTitle("每日一文");
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
 
-        TabLayout tabLayout=(TabLayout)findViewById(R.id.tab_layout);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
 
-        ArticleFragment articleFragment=new ArticleFragment();
-        VoiceFragment voiceFragment=new VoiceFragment();
-        CollectionFragment collectionFragment=new CollectionFragment();
+        ArticleFragment articleFragment = new ArticleFragment();
+        VoiceFragment voiceFragment = new VoiceFragment();
+        CollectionFragment collectionFragment = new CollectionFragment();
         fragments.add(articleFragment);
         fragments.add(voiceFragment);
         fragments.add(collectionFragment);
-        ContentPagerAdapter adapter=new ContentPagerAdapter(getSupportFragmentManager(),fragments,titles);
+        ContentPagerAdapter adapter = new ContentPagerAdapter(getSupportFragmentManager(), fragments, titles);
 
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        for (int i=0;i<3;i++){
-            tabLayout.getTabAt(i).setText(titles[i]);
+        for (int i = 0; i < 3; i++) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Objects.requireNonNull(tabLayout.getTabAt(i)).setText(titles[i]);
+            }
         }
 
     }
 
-    private void checkNetwork(){
+    private void checkNetwork() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        networkChangeReceiver=new NetworkChangeReceiver();
+        networkChangeReceiver = new NetworkChangeReceiver();
         registerReceiver(networkChangeReceiver, intentFilter);
     }
 
     //实现再按一次退出应用
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             exit();
             return false;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    public void exit(){
-        if ((System.currentTimeMillis()-exitTime)>2000){
-            Toast.makeText(getApplicationContext(),"再按一次退出应用",Toast.LENGTH_SHORT).show();
-            exitTime=System.currentTimeMillis();
-        }else {
+    public void exit() {
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次退出应用", Toast.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
+        } else {
             unregisterReceiver(networkChangeReceiver);
             notificationManager.cancelAll();
             finish();

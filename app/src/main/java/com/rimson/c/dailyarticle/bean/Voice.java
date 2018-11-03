@@ -10,12 +10,12 @@ public class Voice implements Parcelable {
     public String imgURL;
     public String mp3URL;
 
-    public Voice(String number,String title,String author,String imgURL,String mp3URL){
-        this.number=number;
-        this.title=title;
-        this.author=author;
-        this.imgURL=imgURL;
-        this.mp3URL=mp3URL;
+    public Voice(String number, String title, String author, String imgURL, String mp3URL) {
+        this.number = number;
+        this.title = title;
+        this.author = author;
+        this.imgURL = imgURL;
+        this.mp3URL = mp3URL;
     }
 
     private Voice(Parcel in) {

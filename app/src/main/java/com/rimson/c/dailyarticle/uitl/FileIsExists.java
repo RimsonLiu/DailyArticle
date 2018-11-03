@@ -1,18 +1,16 @@
 package com.rimson.c.dailyarticle.uitl;
 
-import android.util.Log;
-
 import java.io.File;
 
 public class FileIsExists {
 
-    public static boolean fileIsExists(String strFile){
+    public static boolean fileIsExists(String strFile) {
         try {
-            File file=new File(strFile);
-            if (!file.exists()){
+            File file = new File(strFile);
+            if (!file.exists()) {
                 return false;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         return true;

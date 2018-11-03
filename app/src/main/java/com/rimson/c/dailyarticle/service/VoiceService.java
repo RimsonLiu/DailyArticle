@@ -6,9 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.rimson.c.dailyarticle.R;
 import com.rimson.c.dailyarticle.activity.VoiceActivity;
 
 import java.io.IOException;
@@ -17,12 +15,12 @@ public class VoiceService extends Service {
     public static String dataSource;
 
     public static MediaPlayer mediaPlayer;
-    private VoiceBinder voiceBinder=new VoiceBinder();
+    private VoiceBinder voiceBinder = new VoiceBinder();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer=new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
     }
 
     @Override
@@ -30,11 +28,11 @@ public class VoiceService extends Service {
 
         try {
             mediaPlayer.reset();
-            dataSource=VoiceActivity.downloadPath +VoiceActivity.fileName;
+            dataSource = VoiceActivity.downloadPath + VoiceActivity.fileName;
             mediaPlayer.setDataSource(dataSource);
             mediaPlayer.setLooping(true);
             mediaPlayer.prepare();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         mediaPlayer.start();
@@ -45,7 +43,7 @@ public class VoiceService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mediaPlayer.release();
-        mediaPlayer=null;
+        mediaPlayer = null;
     }
 
     @Nullable
@@ -54,41 +52,41 @@ public class VoiceService extends Service {
         return voiceBinder;
     }
 
-    public class VoiceBinder extends Binder{
-        public void play(){
-            if(!mediaPlayer.isPlaying()){
+    public class VoiceBinder extends Binder {
+        public void play() {
+            if (!mediaPlayer.isPlaying()) {
                 mediaPlayer.start();
                 //remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.pause);
             }
         }
 
-        public void pause(){
-            if (mediaPlayer.isPlaying()){
+        public void pause() {
+            if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 //remoteViews.setImageViewResource(R.id.playOrPause,R.drawable.play);
             }
         }
 
-        public void stop(){
-            if (mediaPlayer!=null){
+        public void stop() {
+            if (mediaPlayer != null) {
                 mediaPlayer.stop();
                 mediaPlayer.release();
             }
         }
 
-        public int getProgress(){
-            return mediaPlayer.getCurrentPosition()/1000;
+        public int getProgress() {
+            return mediaPlayer.getCurrentPosition() / 1000;
         }
 
-        public int getDuration(){
-            return mediaPlayer.getDuration()/1000;
+        public int getDuration() {
+            return mediaPlayer.getDuration() / 1000;
         }
 
-        public boolean getStatus(){
+        public boolean getStatus() {
             return mediaPlayer.isPlaying();
         }
 
-        public void seekToPosition(int sec){
+        public void seekToPosition(int sec) {
             mediaPlayer.seekTo(sec);
         }
 

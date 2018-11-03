@@ -17,36 +17,32 @@ import java.util.ArrayList;
 
 public class VoiceRecyclerViewAdapter extends RecyclerView.Adapter<VoiceViewHolder> {
     private ArrayList<Voice> voiceArrayList;
-    private Context context;
 
-    private BitmapUtil bitmapUtil;
     private OnMyItemClickListener listener;
 
-    public interface OnMyItemClickListener{
-        void MyClick(View view,int position);
+    public interface OnMyItemClickListener {
+        void MyClick(View view, int position);
     }
 
-    public void setOnMyItemClickListener(OnMyItemClickListener listener){
-        this.listener=listener;
+    public void setOnMyItemClickListener(OnMyItemClickListener listener) {
+        this.listener = listener;
     }
 
-    public VoiceRecyclerViewAdapter(Context context, ArrayList voiceArrayList){
-        this.context=context;
-        this.voiceArrayList=voiceArrayList;
+    public VoiceRecyclerViewAdapter(ArrayList<Voice> voiceArrayList) {
+        this.voiceArrayList = voiceArrayList;
     }
 
     @NonNull
     @Override
     public VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view=LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cardview_voice,parent,false);
-        context=parent.getContext();
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.cardview_voice, parent, false);
         return new VoiceViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final VoiceViewHolder holder, final int position) {
-        Voice thisVoice=voiceArrayList.get(position);
+    public void onBindViewHolder(@NonNull final VoiceViewHolder holder, int position) {
+        Voice thisVoice = voiceArrayList.get(position);
 
         holder.numberTV.setText(thisVoice.number);
         holder.titleTV.setText(thisVoice.title);
@@ -58,14 +54,14 @@ public class VoiceRecyclerViewAdapter extends RecyclerView.Adapter<VoiceViewHold
                         .fitCenter())
                 .into(holder.imageView);*/
 
-        bitmapUtil=new BitmapUtil();
-        bitmapUtil.display(holder.imageView,thisVoice.imgURL);
+        BitmapUtil bitmapUtil = new BitmapUtil();
+        bitmapUtil.display(holder.imageView, thisVoice.imgURL);
 
-        if (listener!=null){
+        if (listener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.MyClick(view,position);
+                    listener.MyClick(view, holder.getAdapterPosition());
                 }
             });
         }

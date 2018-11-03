@@ -9,34 +9,36 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class LocalCacheUtil {
-    private static final String CACHE_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+"/dailyarticle/cache/";
+class LocalCacheUtil {
+    private static final String CACHE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dailyarticle/cache/";
 
-    public Bitmap getBitmapFromLocal(String url){
-        String fileName=null;
+    Bitmap getBitmapFromLocal(String url) {
+        String fileName;
         try {
-            fileName= MD5Util.encode(url);
-            File file=new File(CACHE_PATH,fileName);
-            Bitmap bitmap=BitmapFactory.decodeStream(new FileInputStream(file));
-            return bitmap;
-        }catch (IOException e){
+            fileName = MD5Util.encode(url);
+            if (fileName != null) {
+                File file = new File(CACHE_PATH, fileName);
+                return BitmapFactory.decodeStream(new FileInputStream(file));
+            }
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public void setBitmapToLocal(String url,Bitmap bitmap){
+    void setBitmapToLocal(String url, Bitmap bitmap) {
         try {
-            String fileName=MD5Util.encode(url);
-            File file=new File(CACHE_PATH,fileName);
-
-            File parentFile=file.getParentFile();
-            if (!parentFile.exists()){
-                parentFile.mkdirs();
+            String fileName = MD5Util.encode(url);
+            if (fileName != null) {
+                File file = new File(CACHE_PATH, fileName);
+                File parentFile = file.getParentFile();
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(file));
             }
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,new FileOutputStream(file));
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

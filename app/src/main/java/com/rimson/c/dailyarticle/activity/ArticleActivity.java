@@ -27,40 +27,41 @@ public class ArticleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
-        articleStared=true;
-        mContext=this;
+        articleStared = true;
+        mContext = this;
         getArticle();
     }
 
-    private void getArticle(){
-        final Collection collection=getIntent().getParcelableExtra("ARTICLE");
-        this.title=collection.title;
-        this.author=collection.author;
-        this.article=collection.content;
-        operator=new Operator(mContext);
+    private void getArticle() {
+        final Collection collection = getIntent().getParcelableExtra("ARTICLE");
+        this.title = collection.title;
+        this.author = collection.author;
+        this.article = collection.content;
+        operator = new Operator(mContext);
 
-        TextView titleTV=(TextView)findViewById(R.id.articleTitle);
-        TextView articleTV=(TextView)findViewById(R.id.Article);
-        final ImageView star=(ImageView)findViewById(R.id.articleStar);
-        Button scrollBtn=(Button)findViewById(R.id.scrollUP);
-        final ScrollView scrollView=(ScrollView)findViewById(R.id.article_scroll);
+        TextView titleTV = findViewById(R.id.articleTitle);
+        TextView articleTV = findViewById(R.id.Article);
+        final ImageView star = findViewById(R.id.articleStar);
+        Button scrollBtn = findViewById(R.id.scrollUP);
+        final ScrollView scrollView = findViewById(R.id.article_scroll);
 
         titleTV.setText(collection.title);
-        articleTV.setText(author+article);
+        String articleText = author + article;
+        articleTV.setText(articleText);
 
         star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (articleStared){
-                    articleStared=false;
-                    operator.delete(new Collection("ARTICLE",title,author,null,null));
+                if (articleStared) {
+                    articleStared = false;
+                    operator.delete(new Collection("ARTICLE", title, author, null, null));
                     star.setImageResource(R.drawable.star);
-                    Toast.makeText(mContext,"取消收藏",Toast.LENGTH_SHORT).show();
-                }else {
-                    articleStared=true;
-                    operator.add(new Collection("ARTICLE",title,author,article,""));
+                    Toast.makeText(mContext, "取消收藏", Toast.LENGTH_SHORT).show();
+                } else {
+                    articleStared = true;
+                    operator.add(new Collection("ARTICLE", title, author, article, ""));
                     star.setImageResource(R.drawable.stared);
-                    Toast.makeText(mContext,"收藏成功",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "收藏成功", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -10,15 +10,13 @@ import android.widget.Toast;
 public class NetworkChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        ConnectivityManager connectivityManager=(ConnectivityManager)context
+        ConnectivityManager connectivityManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if (networkInfo!=null&&networkInfo.isAvailable()){
-            //网络可用
-
-        }else {
-            Toast.makeText(context,"当前网络不可用",Toast.LENGTH_SHORT).show();
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isAvailable()) {
+                Toast.makeText(context, "当前网络不可用", Toast.LENGTH_SHORT).show();
+            }
         }
-
     }
 }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.rimson.c.dailyarticle.activity.VoiceActivity;
-import com.rimson.c.dailyarticle.bean.Voice;
 
 import static com.rimson.c.dailyarticle.service.VoiceService.mediaPlayer;
 
@@ -14,16 +13,15 @@ public class VoiceBroadCast extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (action!=null&&action.equals("play_or_pause")) {
-            if (mediaPlayer.isPlaying()){
+        if (action != null && action.equals("play_or_pause")) {
+            if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 VoiceActivity.updateNotification(true);
-            }else {
+            } else {
                 mediaPlayer.start();
                 VoiceActivity.updateNotification(false);
             }
-        }
-        else if (action!=null&&action.equals("close")){
+        } else if (action != null && action.equals("close")) {
             mediaPlayer.pause();
             VoiceActivity.clearNotification();
         }

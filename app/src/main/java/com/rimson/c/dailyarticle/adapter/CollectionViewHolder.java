@@ -8,13 +8,20 @@ import android.widget.TextView;
 import com.rimson.c.dailyarticle.R;
 
 public class CollectionViewHolder extends RecyclerView.ViewHolder {
-    public TextView titleTV,authorTV;
-    public ImageView imageView;
+    public TextView titleTV, authorTV;
 
-    public CollectionViewHolder(View itemView) {
+    CollectionViewHolder(View itemView) {
         super(itemView);
-        titleTV=(TextView)itemView.findViewById(R.id.cltTitle);
-        authorTV=(TextView)itemView.findViewById(R.id.cltAuthor);
-        imageView=(ImageView)itemView.findViewById(R.id.cltStar);
+        titleTV = itemView.findViewById(R.id.cltTitle);
+        authorTV = itemView.findViewById(R.id.cltAuthor);
+        ImageView imageView = itemView.findViewById(R.id.cltStar);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
     }
 }
