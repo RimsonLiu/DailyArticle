@@ -1,11 +1,10 @@
-package com.rimson.c.dailyarticle.uitl;
+package com.rimson.c.dailyarticle.cache;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -44,7 +43,6 @@ public class BitmapTask extends AsyncTask<Object, Void, Bitmap> {
         }
     }
 
-
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection conn = null;
         try {
@@ -63,6 +61,7 @@ public class BitmapTask extends AsyncTask<Object, Void, Bitmap> {
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
 
+                //进行图片大小适配
                 float scaleWidth = 4;
                 float scaleHeight = 4;
                 Matrix matrix = new Matrix();
@@ -72,8 +71,9 @@ public class BitmapTask extends AsyncTask<Object, Void, Bitmap> {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            assert conn != null;
-            conn.disconnect();
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
         return null;
     }

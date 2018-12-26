@@ -1,8 +1,10 @@
-package com.rimson.c.dailyarticle.uitl;
+package com.rimson.c.dailyarticle.cache;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+
+import com.rimson.c.dailyarticle.uitl.MD5Util;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,8 +1,8 @@
 package com.rimson.c.dailyarticle.activity;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,7 +18,6 @@ public class ArticleActivity extends AppCompatActivity {
     private boolean articleStared;
     private Operator operator;
     private Context mContext;
-
     private String title;
     private String author;
     private String article;
@@ -46,8 +45,10 @@ public class ArticleActivity extends AppCompatActivity {
         final ScrollView scrollView = findViewById(R.id.article_scroll);
 
         titleTV.setText(collection.title);
+        titleTV.setTextIsSelectable(true);
         String articleText = author + article;
         articleTV.setText(articleText);
+        articleTV.setTextIsSelectable(true);
 
         star.setOnClickListener(new View.OnClickListener() {
             @Override

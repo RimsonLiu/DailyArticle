@@ -36,7 +36,7 @@ import com.rimson.c.dailyarticle.broadcast.NetworkChangeReceiver;
 import com.rimson.c.dailyarticle.broadcast.VoiceBroadCast;
 import com.rimson.c.dailyarticle.db.Operator;
 import com.rimson.c.dailyarticle.service.VoiceService;
-import com.rimson.c.dailyarticle.uitl.BitmapUtil;
+import com.rimson.c.dailyarticle.cache.BitmapUtil;
 import com.rimson.c.dailyarticle.uitl.CalculateTime;
 import com.rimson.c.dailyarticle.uitl.FileIsExists;
 
@@ -197,7 +197,8 @@ public class VoiceActivity extends AppCompatActivity {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "voice");
         notification = new Notification();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("voice", "通知栏", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel("voice", "通知栏"
+                    , NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
 

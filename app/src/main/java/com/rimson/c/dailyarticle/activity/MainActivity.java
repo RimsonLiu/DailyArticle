@@ -24,6 +24,7 @@ import static com.rimson.c.dailyarticle.activity.VoiceActivity.notificationManag
 
 
 public class MainActivity extends AppCompatActivity {
+
     private String[] titles = new String[]{"文章", "声音", "收藏"};
 
     private ArrayList<Fragment> fragments = new ArrayList<>();
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private NetworkChangeReceiver networkChangeReceiver;
 
     private long exitTime = 0;
-    public ViewPager viewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         setTitle("每日一文");
 
-        viewPager = findViewById(R.id.viewPager);
-
+        ViewPager viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
 
         ArticleFragment articleFragment = new ArticleFragment();
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(networkChangeReceiver, intentFilter);
     }
 
-    //实现再按一次退出应用
+    // 实现再按一次退出应用
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

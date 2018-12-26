@@ -1,4 +1,4 @@
-package com.rimson.c.dailyarticle.uitl;
+package com.rimson.c.dailyarticle.cache;
 
 import android.widget.ImageView;
 

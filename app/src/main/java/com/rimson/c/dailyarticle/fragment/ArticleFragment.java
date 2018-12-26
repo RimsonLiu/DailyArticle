@@ -135,9 +135,11 @@ public class ArticleFragment extends Fragment {
                     article = bundle.getString("ARTICLE");
 
                     titleTV.setText(title);
+                    titleTV.setTextIsSelectable(true);
                     String articleText = author + article;
                     articleTV.setText(articleText);
                     articleTV.setMovementMethod(ScrollingMovementMethod.getInstance());
+                    articleTV.setTextIsSelectable(true);
 
                     //判断是否已经收藏
                     articleStared = operator.dataExists(new Collection("ARTICLE", title, author, null, null));
